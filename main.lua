@@ -1,17 +1,17 @@
--- init
+--// Init
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
 
--- services
+--// Services
 local input = game:GetService("UserInputService")
 local run = game:GetService("RunService")
 local tween = game:GetService("TweenService")
 local tweeninfo = TweenInfo.new
 
--- additional
+--// Additional Shit
 local utility = {}
 
--- themes
+--// Themes
 local objects = {}
 local themes = {
 	Background = Color3.fromRGB(24, 24, 24), 
@@ -57,7 +57,7 @@ do
 		return true
 	end
 	
-	function utility:Find(table, value) -- table.find doesn't work for dictionaries
+	function utility:Find(table, value)
 		for i, v in  pairs(table) do
 			if v == value then
 				return i
@@ -143,14 +143,14 @@ do
 		}
 	end
 	
-	function utility:KeyPressed() -- yield until next key is pressed
+	function utility:KeyPressed()
 		local key = input.InputBegan:Wait()
 		
 		while key.UserInputType ~= Enum.UserInputType.Keyboard	 do
 			key = input.InputBegan:Wait()
 		end
 		
-		wait() -- overlapping connection
+		wait()
 		
 		return key
 	end
@@ -198,9 +198,9 @@ do
 	
 end
 
--- classes
+--// Classes
 
-local library = {} -- main
+local library = {}
 local page = {}
 local section = {}
 
@@ -209,7 +209,7 @@ do
 	page.__index = page
 	section.__index = section
 	
-	-- new classes
+	--// New classes
 	
 	function library.new(title)
 		local container = utility:Create("ScreenGui", {
@@ -442,7 +442,7 @@ do
 		return section
 	end
 	
-	-- functions
+	--// Functions
 	
 	function library:setTheme(theme, color3)
 		themes[theme] = color3
@@ -498,16 +498,15 @@ do
 		self.toggling = false
 	end
 	
-	-- new modules
+	--// New modules
 	
 	function library:Notify(title, text, callback)
 	
-		-- overwrite last notification
 		if self.activeNotification then
 			self.activeNotification = self.activeNotification()
 		end
 		
-		-- standard create
+		--// Create
 		local notification = utility:Create("ImageLabel", {
 			Name = "Notification",
 			Parent = self.container,
@@ -581,10 +580,8 @@ do
 			})
 		})
 		
-		-- dragging
 		utility:DraggingEnabled(notification)
 		
-		-- position and size
 		title = title or "Notification"
 		text = text or ""
 		
@@ -606,7 +603,6 @@ do
 			Position = UDim2.new(1, 0, 0, 0)
 		}, 0.2)
 		
-		-- callbacks
 		local active = true
 		local close = function()
 		
@@ -687,7 +683,6 @@ do
 		})
 		
 		table.insert(self.modules, button)
-		--self:Resize()
 		
 		local text = button.Title
 		local debounce
@@ -698,7 +693,6 @@ do
 				return
 			end
 			
-			-- animation
 			utility:Pop(button, 10)
 			
 			debounce = true
@@ -774,7 +768,6 @@ do
 		})
 		
 		table.insert(self.modules, toggle)
-		--self:Resize()
 		
 		local active = default
 		self:updateToggle(toggle, nil, active)
@@ -847,7 +840,6 @@ do
 		})
 		
 		table.insert(self.modules, textbox)
-		--self:Resize()
 		
 		local button = textbox.Button
 		local input = button.Textbox
@@ -954,7 +946,6 @@ do
 		})
 		
 		table.insert(self.modules, keybind)
-		--self:Resize()
 		
 		local text = keybind.Button.Text
 		local button = keybind.Button
@@ -1311,7 +1302,6 @@ do
 		
 		utility:DraggingEnabled(tab)
 		table.insert(self.modules, colorpicker)
-		--self:Resize()
 		
 		local allowed = {
 			[""] = true
@@ -1364,7 +1354,7 @@ do
 			end
 		end
 		
-		for i, container in pairs(tab.Container.Inputs:GetChildren()) do -- i know what you are about to say, so shut up
+		for i, container in pairs(tab.Container.Inputs:GetChildren()) do
 			if container:IsA("ImageLabel") then
 				local textbox = container.Textbox
 				local focused
@@ -1435,7 +1425,7 @@ do
 					rgb[prop] = color3[prop:upper()] * 255
 				end
 				
-				local x = hue -- hue is updated
+				local x = hue
 				self:updateColorPicker(colorpicker, nil, {hue, sat, brightness}) -- roblox is literally retarded
 				utility:Tween(tab.Container.Color.Select, {Position = UDim2.new(x, 0, 0, 0)}, 0.1) -- overwrite
 				
@@ -1444,7 +1434,7 @@ do
 			end
 		end)
 		
-		-- click events
+		--// Click events
 		local button = colorpicker.Button
 		local toggle, debounce, animate
 		
@@ -1494,7 +1484,6 @@ do
 				tab.Position = UDim2.new(0, x1 + x2 + px, 0, py)
 				utility:Tween(tab, {Size = UDim2.new(0, 162, 0, 169)}, 0.2)
 				
-				-- update size and position
 				wait(0.2)
 				tab.ClipsDescendants = false
 				
@@ -1617,7 +1606,6 @@ do
 		})
 		
 		table.insert(self.modules, slider)
-		--self:Resize()
 		
 		local allowed = {
 			[""] = true,
@@ -1764,7 +1752,6 @@ do
 		})
 		
 		table.insert(self.modules, dropdown)
-		--self:Resize()
 		
 		local search = dropdown.Search
 		local focused
@@ -1818,7 +1805,6 @@ do
 		local button = page.button
 		
 		if toggle then
-			-- page button
 			button.Title.TextTransparency = 0
 			button.Title.Font = Enum.Font.GothamSemibold
 			
@@ -1826,7 +1812,6 @@ do
 				button.Icon.ImageTransparency = 0
 			end
 			
-			-- update selected page
 			local focusedPage = self.focusedPage
 			self.focusedPage = page
 			
@@ -1834,7 +1819,6 @@ do
 				self:SelectPage(focusedPage)
 			end
 			
-			-- sections
 			local existingSections = focusedPage and #focusedPage.sections or 0
 			local sectionsRequired = #page.sections - existingSections
 			
@@ -1859,7 +1843,7 @@ do
 				focusedPage.container.Visible = false
 			end
 			
-			if sectionsRequired > 0 then -- "creates" more section
+			if sectionsRequired > 0 then
 				for i = existingSections + 1, #page.sections do
 					local section = page.sections[i].container.Parent
 					
